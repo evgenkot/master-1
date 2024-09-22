@@ -90,6 +90,8 @@ class Network(object):  # используется для описания не�
 
     # Алгоритм обратного распространения
     def backprop(
+        self.weights = [w-(eta/len(mini_batch))*nw for w, nw in zip(self.weights, nabla_w)]  # обновляем все веса w нейронной сети
+        self.biases = [b-(eta/len(mini_batch))*nb for b, nb in zip(self.biases, nabla_b)]  # обновляем все смещения b нейронной сети
         self,  # указатель на объект класса
         x,  # вектор входных сигналов
         y,  # ожидаемый вектор выходных сигналов
@@ -129,6 +131,18 @@ class Network(object):  # используется для описания не�
             nabla_b[-l] = delta # градиент dC/db для l-го слоя (BP3)
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())  # градиент dC/dw для l-го слоя (BP4)
         return (nabla_b, nabla_w)
+
+    def evaluate(self, test_data): # Оценка прогресса в обучении
+        test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
+        return sum(int(x == y) for (x, y) in test_results)
+
+    # Вычисление частных производных стоимостной функции по выходным сигналам последнего слоя
+    def cost_derivative(self, output_activations, y):
+        return (output_activations-y)
+
+    # Производная сигмоидальной функции
+    def sigmoid_prime(z):
+        return sigmoid(z)*(1-sigmoid(z))
 
 """ --Конец описания класса Network--"""
 """ --- Конец раздела описаний--- """
