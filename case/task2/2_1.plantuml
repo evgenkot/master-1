@@ -1,0 +1,26 @@
+@startuml
+
+interface Collection {
+    + add(obj: Object): void
+}
+
+abstract class BaseCollection implements Collection {
+    // Общие методы для коллекций
+}
+
+interface List extends Collection {
+    + get(k: int): Object
+}
+
+abstract class BaseList extends BaseCollection implements List {
+    // Общие методы для списков
+}
+
+class ArrayList extends BaseList {
+    - elements: Object[]
+    + add(obj: Object): void
+    + get(k: int): Object
+}
+
+@enduml
+

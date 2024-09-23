@@ -1,0 +1,47 @@
+@startuml
+class Patient {
+    - id: int
+    - name: String
+    - dateOfBirth: Date
+    - medicalHistory: List<MedicalRecord>
+    + requestPrescription(doctor: Doctor): Prescription
+}
+
+class Doctor {
+    - id: int
+    - name: String
+    - specialty: String
+    - schedule: List<Appointment>
+    + prescribeMedication(patient: Patient): Prescription
+}
+
+class Appointment {
+    - id: int
+    - date: Date
+    - time: Time
+    - patient: Patient
+    - doctor: Doctor
+    + confirm(): void
+    + cancel(): void
+}
+
+class Prescription {
+    - id: int
+    - patient: Patient
+    - doctor: Doctor
+    - medications: List<Medication>
+    + addMedication(medication: Medication): void
+}
+
+class Medication {
+    - id: int
+    - name: String
+    - dosage: String
+}
+
+Patient "1" -- "0..*" Appointment : books
+Doctor "1" -- "0..*" Appointment : has
+Patient "1" -- "0..*" Prescription : receives
+Doctor "1" -- "0..*" Prescription : issues
+Prescription "1" -- "0..*" Medication : contains
+@enduml
