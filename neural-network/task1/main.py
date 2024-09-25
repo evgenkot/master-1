@@ -13,4 +13,3 @@ net = network.Network([784, 30, 10])
 
 # Train the network using Stochastic Gradient Descent
 net.SGD(training_data, 30, 10, 3.0, test_data=test_data)
-
