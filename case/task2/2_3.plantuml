@@ -1,0 +1,20 @@
+@startuml
+interface Map<K, V> {
+    +get(key: K): V
+    +put(key: K, value: V): void
+    +remove(key: K): void
+}
+
+interface Entry<K, V> {
+    +getKey(): K
+    +getValue(): V
+}
+
+Map *-- Entry
+
+interface Map_StringInteger {
+    +get(key: String): Integer
+    +put(key: String, value: Integer): void
+    +remove(key: String): void
+}
+@enduml

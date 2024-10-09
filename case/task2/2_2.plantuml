@@ -1,0 +1,6 @@
+@startuml
+class Collections {
+    + static Boolean addAll(Collection coll, Object... elements)
+    + static Collection empty
+}
+@enduml
