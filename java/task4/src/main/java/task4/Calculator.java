@@ -20,7 +20,7 @@ public class Calculator extends JFrame implements ActionListener {
 
         inputField = new JTextField();
         inputField.setEditable(false);
-        inputField.setFont(new Font("Arial", Font.PLAIN, 24));
+        inputField.setFont(new Font("Arial", Font.PLAIN, 48));
         inputField.setBackground(Color.DARK_GRAY);
         inputField.setForeground(Color.WHITE);
         add(inputField, BorderLayout.NORTH);
@@ -88,6 +88,9 @@ public class Calculator extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < 10; i++) {
             if (e.getSource() == numberButtons[i]) {
+                if (!inputField.getText().matches("[0-9.]*")) {
+                    inputField.setText("");
+                }
                 inputField.setText(inputField.getText() + i);
             }
         }
@@ -101,7 +104,12 @@ public class Calculator extends JFrame implements ActionListener {
         if (e.getSource() == addButton) {
             performOperation('+');
         } else if (e.getSource() == subButton) {
-            performOperation('-');
+            if (inputField.getText().isBlank()) {
+                inputField.setText("-");
+            }
+            else {
+                performOperation('-'); 
+            }
         } else if (e.getSource() == mulButton) {
             performOperation('*');
         } else if (e.getSource() == divButton) {
@@ -118,7 +126,7 @@ public class Calculator extends JFrame implements ActionListener {
                 inputField.setText(currentText.substring(0, currentText.length() - 1));
             }
         } else if (e.getSource() == piButton) {
-            inputField.setText(inputField.getText() + Math.PI);
+            inputField.setText(String.valueOf(Math.PI));
         }
     }
 
