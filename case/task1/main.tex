@@ -1,13 +1,14 @@
 \documentclass{article}
-\usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
 \usepackage[russian]{babel}
+\usepackage{amsmath}
 \usepackage{graphicx}
 
 \begin{document}
 
-\title{Практика № 1}
-\author{Ращупкин Е., Боков Е., Мишунин Н.}
+\title{Практика 1}
+\author{Ращупкин Е, Боков Е, Мишунин Н}
 \maketitle
 
 \section{Задача 1}
@@ -98,6 +99,53 @@ File "0.." o-- "1" Cluster
     \item Выделите классы и постройте модель предметной области для программы-ежедневника для посетителей.
 \end{itemize}
 
+\begin{verbatim}
+@startuml
+class DailySchedule {
++ date: DateTime
++ appointments: Appointment[]
++ addAppointment(appointment: Appointment)
++ removeAppointment(appointment: Appointment)
++ viewAppointments()
+}
+class Appointment {
++ id: int
++ date: DateTime
++ ambulance: Ambulance
++ doctor: Doctor
++ patient: Patient
++ description: string
++ getDetails(id: int): string
+}
+class Doctor {
++ id: int
++ name: string
++ createAppointment(patient: Patient, date: DateTime, description: string)
+}
+class Patient {
++ id: int
++ name: string
++ bookAppointment(doctor: Doctor, date: DateTime)
++ bookAppointment(doctorId: int, date: DateTime)
+}
+class Ambulance {
++ name: string
++ getDoctorById(doctor_id: int)
+}
+
+class Recipe {
++ createAppointment(patient: Patient, doctor: Doctor): Appointment
+}
+DailySchedule o-- Appointment
+Appointment -- Doctor
+Appointment -- Patient
+Doctor --* Ambulance
+Recipe --o Doctor
+@enduml
+\end{verbatim}
+
+\includegraphics[width=\textwidth]{2.png}
+
 \section{Задача 3}
 В межгосударственном стандарте по оценке качества программных средств ГОСТ 28195-89 качество характеризуется набором факторов. На каждом из этапов разработки программного средства фактор описывается набором критериев. Каждый критерий измеряется с помощью нескольких метрик, различающихся для этапов разработки.
 
@@ -108,54 +156,59 @@ File "0.." o-- "1" Cluster
 
 \begin{verbatim}
 @startuml
-class DevelopmentStage {
-    +factors: Factor[]
-    +DevelopmentStage(factors: Factor[]): DevelopmentStage
+package "Первая часть задания" {
+    class DevelopmentStage {
+        +factors: Factor[]
+        +DevelopmentStage(factors: Factor[]): DevelopmentStage
+    }
+
+    class Factor {
+        +criterias: Criteria[]
+        +Factor(criteria: Criteria[]): Factor
+    }
+
+    class Criteria {
+        +metrics: Metric[]
+        +Criteria(metrics: Metric[]): Criteria
+    }
+
+    class Metric {
+        +estimatedProperties: EstimatedProperty[]
+        +Metric(estimatedProperties: EstimatedProperty[]): Metric
+    }
 }
 
-class Factor {
-    +criterias: Criteria[]
-    +Factor(criteria: Criteria[]): Factor
+package "Вторая часть задания" {
+    class ReliabilityFactor {
+        +criterias: FailoverCriteria[]
+        +ReliabilityFactor(criterias: FailoverCriteria[]): ReliabilityFactor
+    }
+
+    class FailoverCriteria {
+        +errorRateMetrics: ErrorRateMetric[]
+        +recoveryTimeMetrics: RecoveryTimeMetric[]
+        +ReliabilityFactor(errorRateMetrics: ErrorRateMetric[], \
+recoveryTimeMetrics: RecoveryTimeMetric[]): ReliabilityFactor
+    }
+
+    class ErrorRateMetric {
+        -numOfError: int32
+        -timeWork: float
+        +CalculateNumOfErrors(): int32
+    }
+
+    class RecoveryTimeMetric {
+        -recoveryTime: double
+        +CalculateRecoveryTime(): double
+    }
 }
 
-class Criteria {
-    +metrics: Metric[]
-    +Criteria(metrics: Metric[]): Criteria
-}
-
-class Metric {
-    +estimatedProperties: EstimatedProperty[]
-    +Metric(estimatedProperties: EstimatedProperty[]): Metric
-}
-
-class ReliabilityFactor {
-    +criterias: FailoverCriteria[]
-    +ReliabilityFactor(criterias: FailoverCriteria[]): ReliabilityFactor
-}
-
-class FailoverCriteria {
-    +errorRateMetrics: ErrorRateMetric[]
-    +recoveryTimeMetrics: RecoveryTimeMetric[]
-    +ReliabilityFactor(errorRateMetrics: ErrorRateMetric[], recoveryTimeMetrics: RecoveryTimeMetric[]): ReliabilityFactor
-}
-
-class ErrorRateMetric {
-    -numOfError: int32
-    -timeWork: float
-    +CalculateNumOfErrors(): int32
-}
-
-class RecoveryTimeMetric {
-    -recoveryTime: double
-    +CalculateRecoveryTime(): double
-}
-
-DevelopmentStage "1" *-- "*" Factor
-Factor "1" *-- "*" Criteria
-Criteria "1" *-- "*" Metric
-ReliabilityFactor "1" *-- "*" FailoverCriteria
-FailoverCriteria "1" *-- "*" ErrorRateMetric
-FailoverCriteria "1" *-- "*" RecoveryTimeMetric
+DevelopmentStage "1" -- "*" Factor
+Factor "1" -- "*" Criteria
+Criteria "1" -- "*" Metric
+ReliabilityFactor *-- FailoverCriteria
+FailoverCriteria  *-- ErrorRateMetric
+FailoverCriteria *-- RecoveryTimeMetric
 @enduml
 \end{verbatim}
 
@@ -246,17 +299,22 @@ class ConnectionManager {
 }
 'Аудиоплееры состоят из менеджера плагинов
 AudioPlayer "1" *-- "1" PluginManager
-'Аудиоплееры состоят из пользовательского интерфейса, который обрабатывает пользовательский ввод
+'Аудиоплееры состоят из пользовательского интерфейса, 
+'который обрабатывает пользовательский ввод
 AudioPlayer "1" *-- "1" UserInterface
 'Аудиоплееры состоят из мультимедиа-библиотеки
 AudioPlayer "1" *-- "1" MediaLibrary
-'Уточните описание управляющего компонента, чтобы в нем присутствовал менеджер сетевых подключений
+'Уточните описание управляющего компонента, 
+'чтобы в нем присутствовал менеджер сетевых подключений
 PluginManager "1" *-- "1" ConnectionManager
-'Менеджер плагинов может, используя менеджер соединений, подключаться к серверу с целью проверки обновлений установленных плагинов
+'Менеджер плагинов может, используя менеджер соединений, 
+'подключаться к серверу с целью проверки обновлений установленных плагинов
 PluginManager "1" o-- "0..*" Plugin 
-'Плагин может через менеджера зарегистрировать себя в качестве обработчика этих событий
+'Плагин может через менеджера зарегистрировать себя 
+'в качестве обработчика этих событий
 Plugin "1" ..|> "0..1" Listener
-'PluginManager реализует интерфейс Subject с общедоступным свойством listeners типа Listener
+'PluginManager реализует интерфейс Subject 
+'с общедоступным свойством listeners типа Listener
 PluginManager "1" ..|> "0..*" Listener
 @enduml
 \end{verbatim}
@@ -269,16 +327,32 @@ PluginManager "1" ..|> "0..*" Listener
 
 \includegraphics[width=\textwidth]{task5.png}
 
-$ S = \frac{(5 + 5 + 5) + (1 + 3 + 2)}{1 + 3 + \sqrt{1 + 3}} = 3.5 $
+$$S = \frac{(5 + 5 + 5) + (1 + 3 + 2)}{1 + 3 + \sqrt{1 + 3}} = 3.5$$
+
+Согласно таблице диапазонов предпочтительных оценок для диаграммы в UML, диапазон предпочтительных оценок диаграммы классов без атрибутов и операций 3–3.5. В нашем случае оценка S = 3.5. Значение оценки является предпочтительным значением диаграммы.
 
 \section{Задача 6}
 Рассчитать оценку диаграммы классов, сделать вывод
 
 \includegraphics[width=\textwidth]{task6.png}
 
+$$S_{\text{Работодатель}} = \frac{\sqrt{2} + \sqrt{0}}{0.3 \cdot (2 + 0)} = 2.36$$
+$$S_{\text{БДСтудентов}} = \frac{\sqrt{2} + \sqrt{4}}{0.3 \cdot (2 + 4)} = 2.53$$
+$$S_{\text{Студент}} = \frac{\sqrt{0} + \sqrt{1}}{0.3 \cdot (0 + 1)} = 3.33$$
+$$S = \frac{(5 + 5 + 5 + 5 + 5 + 5) + (2.36 + 2.53 + 3.33) + (1 + 1 + 3 + 2 + 2)} {1 + 6 + \sqrt{1 + 4}} = 5.11$$
+
+Согласно таблице диапазонов предпочтительных оценок для диаграммы c атрибутами и операциями в UML, диапазон предпочтительных оценок диаграммы классов без атрибутов и операций 5–5.5. В нашем случае оценка S = 5.11. Значение оценки является предпочтительным значением диаграммы.
+
 \section{Задача 7}
 Рассчитать оценку диаграммы классов, сделать вывод
 
 \includegraphics[width=\textwidth]{task7.png}
+
+$$S_{\text{Деканат}} = \frac{\sqrt{0} + \sqrt{2}}{0.3 \cdot (0 + 2)} = 2.36$$
+$$S_{\text{Группа}} = \frac{\sqrt{0} + \sqrt{4}}{0.3 \cdot (0 + 4)} = 3.33$$
+$$S_{\text{ПользовательСистемы}} = \frac{\sqrt{1} + \sqrt{8}}{0.3 \cdot (1 + 8)} = 1.4$$
+$$S = \frac{(5 + 5 + 5 + 5 + 5) + (2.36 + 3.33 + 1.4) + (1 + 1 + 2 + 2 + 2)}{1 + 5 + \sqrt{1 + 3}} = 5.01$$
+
+Согласно таблице диапазонов предпочтительных оценок для диаграммы c атрибутами и операциями в UML, диапазон предпочтительных оценок диаграммы классов без атрибутов и операций 5–5.5. В нашем случае оценка S = 5.01. Значение оценки является предпочтительным значением диаграммы.
 
 \end{document}
