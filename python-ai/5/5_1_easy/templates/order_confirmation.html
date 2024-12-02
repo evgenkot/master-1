@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Order Confirmation</h2>
+<p>Thank you for your order!</p>
+<p>You have ordered: {{ item.name }} for ${{ item.price }}.</p>
+<p>Status: {% if item.availability %}Available{% else %}Out of Stock{% endif %}</p>
+<a href="{{ url_for('index') }}">Back to Items</a>
+{% endblock %}
+
